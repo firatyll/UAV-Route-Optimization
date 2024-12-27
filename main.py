@@ -12,6 +12,7 @@ UAV_SPEED = 27
 INITIAL_TEMP = 1000
 COOLING_RATE = 0.95
 ITERATION_COUNT = 1000
+UAV_CAPACITY = TASK_COUNT // UAV_COUNT + 1
 
 def initializeEnvironment():
     while len(TASK_COORDINATES) < TASK_COUNT:
@@ -34,8 +35,11 @@ def generateInitialSolution(task_list, depot_list):
         task_assignments[i].append(depot_list[i])
 
     for task in task_list:
-        assigned_depot = np.random.randint(0, DEPOT_COUNT)
-        task_assignments[assigned_depot].append(task)
+        while True:
+            assigned_depot = np.random.randint(0, DEPOT_COUNT)
+            if len(task_assignments[assigned_depot]) - 2 < UAV_CAPACITY:
+                task_assignments[assigned_depot].append(task)
+                break
 
     for i in range(DEPOT_COUNT):
         task_assignments[i].append(depot_list[i])
@@ -69,10 +73,11 @@ def generateNeighbor(solution):
 
                 task1 = neighbor_solution[depot1].pop(task1_index)
                 task2 = neighbor_solution[depot2].pop(task2_index)
-                neighbor_solution[depot1].insert(task1_index, task2)
-                neighbor_solution[depot2].insert(task2_index, task1)
-            else:
-                neighbor_solution = None
+                if len(neighbor_solution[depot1]) - 2 < UAV_CAPACITY and len(neighbor_solution[depot2]) - 2 < UAV_CAPACITY:
+                    neighbor_solution[depot1].insert(task1_index, task2)
+                    neighbor_solution[depot2].insert(task2_index, task1)
+                else:
+                    neighbor_solution = None
 
         elif method == 'relocateTask':
             depot1, depot2 = np.random.choice(len(neighbor_solution), 2, replace=False)
@@ -80,10 +85,11 @@ def generateNeighbor(solution):
             if len(neighbor_solution[depot1]) > 3:
                 task_index = np.random.randint(1, len(neighbor_solution[depot1]) - 1)
                 task = neighbor_solution[depot1].pop(task_index)
-                insert_index = np.random.randint(1, len(neighbor_solution[depot2]))
-                neighbor_solution[depot2].insert(insert_index, task)
-            else:
-                neighbor_solution = None
+                if len(neighbor_solution[depot2]) - 2 < UAV_CAPACITY:
+                    insert_index = np.random.randint(1, len(neighbor_solution[depot2]))
+                    neighbor_solution[depot2].insert(insert_index, task)
+                else:
+                    neighbor_solution = None
 
     return neighbor_solution
 
