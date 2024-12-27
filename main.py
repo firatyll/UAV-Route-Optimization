@@ -63,7 +63,7 @@ def generateNeighbor(solution):
         if method == 'swapTasks':
             depot1, depot2 = np.random.choice(len(neighbor_solution), 2, replace=False)
 
-            if len(neighbor_solution[depot1]) > 2 and len(neighbor_solution[depot2]) > 2:
+            if len(neighbor_solution[depot1]) > 3 and len(neighbor_solution[depot2]) > 3:
                 task1_index = np.random.randint(1, len(neighbor_solution[depot1]) - 1)
                 task2_index = np.random.randint(1, len(neighbor_solution[depot2]) - 1)
 
@@ -77,7 +77,7 @@ def generateNeighbor(solution):
         elif method == 'relocateTask':
             depot1, depot2 = np.random.choice(len(neighbor_solution), 2, replace=False)
 
-            if len(neighbor_solution[depot1]) > 2:
+            if len(neighbor_solution[depot1]) > 3:
                 task_index = np.random.randint(1, len(neighbor_solution[depot1]) - 1)
                 task = neighbor_solution[depot1].pop(task_index)
                 insert_index = np.random.randint(1, len(neighbor_solution[depot2]))
@@ -133,7 +133,7 @@ def main():
     print("Best Cost:", best_cost)
     print("Total Time:", calculateTime(best_cost) , "Seconds")
 
-    plot_environment(depot_list, task_list, initial_solution, title="Simulated Annealing Solution", best_cost=best_cost, initial_cost=initial_cost)
+    plot_environment(depot_list, task_list, initial_solution, best_solution, title="Simulated Annealing Solution", best_cost=best_cost, initial_cost=initial_cost)
 
 
 main()
