@@ -53,22 +53,39 @@ def calculateTotalCost(solution, depot_list):
         total_cost += calculateDistance(current_point, depot)
     return total_cost
 
-def swapTasksBetweenDepots(solution):
-    new_solution = [list(tasks) for tasks in solution]
+def generateNeighbor(solution):
+    neighbor_solution = None
+    while neighbor_solution is None:
+        neighbor_solution = [list(tasks) for tasks in solution]
 
-    depot1, depot2 = np.random.choice(len(new_solution), 2, replace=False)
-    if len(new_solution[depot1]) <= 2 or len(new_solution[depot2]) <= 2:
-        return swapTasksBetweenDepots(solution)
+        method = np.random.choice(['swapTasks', 'relocateTask'])
 
-    task1_index = np.random.randint(1, len(new_solution[depot1]) - 1)
-    task2_index = np.random.randint(1, len(new_solution[depot2]) - 1)
+        if method == 'swapTasks':
+            depot1, depot2 = np.random.choice(len(neighbor_solution), 2, replace=False)
 
-    task1 = new_solution[depot1].pop(task1_index)
-    task2 = new_solution[depot2].pop(task2_index)
-    new_solution[depot1].insert(task1_index, task2)
-    new_solution[depot2].insert(task2_index, task1)
+            if len(neighbor_solution[depot1]) > 2 and len(neighbor_solution[depot2]) > 2:
+                task1_index = np.random.randint(1, len(neighbor_solution[depot1]) - 1)
+                task2_index = np.random.randint(1, len(neighbor_solution[depot2]) - 1)
 
-    return new_solution
+                task1 = neighbor_solution[depot1].pop(task1_index)
+                task2 = neighbor_solution[depot2].pop(task2_index)
+                neighbor_solution[depot1].insert(task1_index, task2)
+                neighbor_solution[depot2].insert(task2_index, task1)
+            else:
+                neighbor_solution = None
+
+        elif method == 'relocateTask':
+            depot1, depot2 = np.random.choice(len(neighbor_solution), 2, replace=False)
+
+            if len(neighbor_solution[depot1]) > 2:
+                task_index = np.random.randint(1, len(neighbor_solution[depot1]) - 1)
+                task = neighbor_solution[depot1].pop(task_index)
+                insert_index = np.random.randint(1, len(neighbor_solution[depot2]))
+                neighbor_solution[depot2].insert(insert_index, task)
+            else:
+                neighbor_solution = None
+
+    return neighbor_solution
 
 def simulatedAnnealing(depot_list, initial_solution, initial_cost, INITIAL_TEMP, COOLING_RATE, ITERATION_COUNT):
     current_solution = initial_solution
@@ -80,7 +97,7 @@ def simulatedAnnealing(depot_list, initial_solution, initial_cost, INITIAL_TEMP,
     temp = INITIAL_TEMP
 
     for iteration in range(ITERATION_COUNT):
-        neighbor_solution = swapTasksBetweenDepots(current_solution)
+        neighbor_solution = generateNeighbor(current_solution)
         neighbor_cost = calculateTotalCost(neighbor_solution, depot_list)
 
         delta_cost = neighbor_cost - current_cost
