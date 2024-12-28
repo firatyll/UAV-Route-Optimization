@@ -13,6 +13,9 @@ INITIAL_TEMP = 1000
 COOLING_RATE = 0.95
 ITERATION_COUNT = 1000
 UAV_CAPACITY = TASK_COUNT // UAV_COUNT + 1
+DEPOT_ALTITUDE = 0
+CRUISE_ALTITUDE = 3000
+TASK_ALTITUDE = 1500
 
 def initializeEnvironment():
     while len(TASK_COORDINATES) < TASK_COUNT:
@@ -26,7 +29,25 @@ def initializeEnvironment():
         DEPOT_COORDINATES.add((x, y))
 
 def calculateDistance(pointX, pointY):
-    return sqrt((pointX[0] - pointY[0])**2 + (pointX[1] - pointY[1])**2)
+
+    horizontal_distance= sqrt((pointX[0] - pointY[0])**2 + (pointX[1] - pointY[1])**2)
+    vetrical_distance_to_depot = TASK_ALTITUDE - DEPOT_ALTITUDE
+    vertical_distance_to_cruise = CRUISE_ALTITUDE - TASK_ALTITUDE
+
+    if pointX in DEPOT_COORDINATES or pointY in DEPOT_COORDINATES:
+        return sqrt(vetrical_distance_to_depot**2 + horizontal_distance**2)
+
+    if horizontal_distance > 2*vertical_distance_to_cruise:
+        horizontal_distance = horizontal_distance - 2*vertical_distance_to_cruise
+        distance_to_top_of_climb = vertical_distance_to_cruise*sqrt(2)
+        distance_from_top_of_descend = distance_to_top_of_climb
+        horizontal_distance = distance_to_top_of_climb + horizontal_distance + distance_from_top_of_descend
+        return horizontal_distance
+
+    if horizontal_distance <= 2*vertical_distance_to_cruise:
+        return 2 * ((horizontal_distance / 2) * sqrt(2))
+
+    return horizontal_distance
 
 def generateInitialSolution(task_list, depot_list):
     task_assignments = [[] for _ in range(DEPOT_COUNT)]
