@@ -8,7 +8,7 @@ def main():
     task_list = list(TASK_COORDINATES)
     initial_solution = generateInitialSolution(task_list, depot_list)
     initial_cost = calculateTotalCost(initial_solution, depot_list)
-    best_solution, best_cost = simulatedAnnealing(depot_list, initial_solution, initial_cost, INITIAL_TEMP, COOLING_RATE, ITERATION_COUNT)
+    best_solution, best_cost = simulatedAnnealing(depot_list, initial_solution, initial_cost)
 
     print("Best Solution")
     for sol in best_solution:
@@ -17,6 +17,6 @@ def main():
     print("Best Cost:", best_cost)
     print("Total Time:", calculateTime(best_cost) , "Seconds")
 
-    plot_environment(depot_list, task_list, initial_solution, best_solution, title="Simulated Annealing Solution", best_cost=best_cost, initial_cost=initial_cost)
+    plot_environment(depot_list, task_list, initial_solution, best_solution, calculateTime, title="Simulated Annealing Solution", best_cost=best_cost, initial_cost=initial_cost)
 
 main()

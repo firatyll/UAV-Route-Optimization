@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def plot_environment(depot_coordinates, task_coordinates, initial_solution, best_solution, title="Solution Visualization", best_cost=None, initial_cost=None):
+def plot_environment(depot_coordinates, task_coordinates, initial_solution, best_solution, calculateTime, title="Solution Visualization", best_cost=None, initial_cost=None):
 
     fig, axs = plt.subplots(1, 2, figsize=(20, 10))
 
@@ -18,6 +18,7 @@ def plot_environment(depot_coordinates, task_coordinates, initial_solution, best
         axs[0].plot(x_coords, y_coords, label=f"Route {depot_idx+1}")
 
     axs[0].text(0.05, 0.95, f"Initial Cost: {initial_cost:.2f}", transform=axs[0].transAxes, fontsize=12, color='blue', verticalalignment='top')
+    axs[0].text(0.05, 0.95, f"Initial Time: {calculateTime(initial_cost):.2f}", transform=axs[0].transAxes, fontsize=12, color='blue', verticalalignment='bottom')
     axs[0].set_xlabel("X Coordinate")
     axs[0].set_ylabel("Y Coordinate")
     axs[0].legend()
@@ -37,6 +38,7 @@ def plot_environment(depot_coordinates, task_coordinates, initial_solution, best
         axs[1].plot(x_coords, y_coords, label=f"Route {depot_idx+1}")
 
     axs[1].text(0.05, 0.95, f"Best Cost: {best_cost:.2f}", transform=axs[1].transAxes, fontsize=12, color='green', verticalalignment='top')
+    axs[1].text(0.05, 0.95, f"Best Time: {calculateTime(best_cost):.2f}", transform=axs[1].transAxes, fontsize=12, color='green', verticalalignment='bottom')
     axs[1].set_xlabel("X Coordinate")
     axs[1].set_ylabel("Y Coordinate")
     axs[1].legend()

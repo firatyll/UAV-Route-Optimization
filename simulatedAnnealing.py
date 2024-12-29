@@ -4,7 +4,7 @@ from utils import *
 INITIAL_TEMP = 1000
 COOLING_RATE = 0.95
 
-def simulatedAnnealing(depot_list, initial_solution, initial_cost, INITIAL_TEMP, COOLING_RATE, ITERATION_COUNT):
+def simulatedAnnealing(depot_list, initial_solution, initial_cost):
     current_solution = initial_solution
     current_cost = initial_cost
 
