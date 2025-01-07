@@ -13,6 +13,30 @@ Unmanned Aerial Vehicles (UAVs) play a significant role in various industries, i
 - **Scalable Design:** Can handle multiple UAVs and complex route scenarios.
 - **Visualization Tools:** Displays optimized routes for better understanding and analysis.
 
+## Algorithm Evaluation & Comparison
+
+After running the algorithms 100 times with the same input, the outputs are as in the table. As a result, the average genetic algorithm cost is **16% less** than the average simulated annealing algorithm cost.
+
+| Run     | SimulatedAnnealingCost | GeneticAlgorithmCost |
+|---------|------------------------|----------------------|
+| 1       | 49954.97723010203      | 37950.86388960772    |
+| 2       | 48930.8474596152       | 37915.790592982565   |
+| 3       | 49411.75077769216      | 39899.537658400564   |
+| .       | .                      | .                    |
+| .       | .                      | .                    |
+| .       | .                      | .                    |
+| 97      | 42781.11966332571      | 42946.79459625984    |
+| 98      | 41615.96144690286      | 45069.46126362633    |
+| 99      | 52769.6205226033       | 44812.3042169015     |
+| 100     | 47250.00750125875      | 38209.83840886371    |
+| Average | 48023.8132721242       | 39986.98549336301    |
+
+### Simulated Annealing Visualization
+![simulated annealing](<assets/simulated annealing.png>)
+### Genetic Algorithm Visualization
+![genetic algorithm](<assets/genetic algorithm.png>)
+
+
 ## Installation
 
 1. Clone the repository:

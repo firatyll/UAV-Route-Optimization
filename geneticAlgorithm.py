@@ -36,7 +36,6 @@ def applyCrossover(solution):
             neighbor_solution[depot1] = new_depot1
             neighbor_solution[depot2] = new_depot2
 
-
         if method == 'multiPoint':
 
             min_len = min(len(neighbor_solution[depot1]), len(neighbor_solution[depot2]))
@@ -157,6 +156,15 @@ def geneticAlgorithm(task_list, depot_list):
             new_population.append(offspring2)
 
         new_fitness_values = [calculateTotalCost(individual , depot_list) for individual in new_population]
+
+        best_old_idx = np.argmin(fitness_values)
+        best_old_solution = population[best_old_idx]
+        best_old_cost = fitness_values[best_old_idx]
+
+        worst_new_idx = np.argmax(new_fitness_values)
+
+        new_population[worst_new_idx] = best_old_solution
+        new_fitness_values[worst_new_idx] = best_old_cost
 
         local_best_index = np.argmin(new_fitness_values)
         local_best_cost  = new_fitness_values[local_best_index]

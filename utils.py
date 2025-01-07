@@ -13,8 +13,6 @@ UAV_CAPACITY = TASK_COUNT // UAV_COUNT + 1
 DEPOT_ALTITUDE = 0
 CRUISE_ALTITUDE = 3000
 TASK_ALTITUDE = 1500
-RANDOM_SEED = 44
-np.random.seed(RANDOM_SEED)
 
 def initializeEnvironment():
     while len(TASK_COORDINATES) < TASK_COUNT:
@@ -57,7 +55,7 @@ def generateInitialSolution(task_list, depot_list):
     for task in task_list:
         while True:
             assigned_depot = np.random.randint(0, DEPOT_COUNT)
-            if len(task_assignments[assigned_depot]) - 2 < UAV_CAPACITY:
+            if len(task_assignments[assigned_depot]) < UAV_CAPACITY:
                 task_assignments[assigned_depot].append(task)
                 break
 
