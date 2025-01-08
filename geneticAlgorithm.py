@@ -1,95 +1,177 @@
 from utils import * 
 import numpy as np
+import copy
+from collections import Counter
 
 CROSSOVER_RATE  = 0.9
 MUTATION_RATE = 0.15
 POPULATION_SIZE = 100
 TOURNEMENT_SIZE = 4
+MAX_ATTEMPTS = 50
 
-def applyCrossover(solution):
 
-    neighbor_solution = None
-    while neighbor_solution is None:
-        neighbor_solution = [list(routes) for routes in solution]
-        method = np.random.choice(['singlePoint', 'multiPoint','uniform'])
-        depot1, depot2 = np.random.choice(len(neighbor_solution), 2, replace=False)
+def repairSolution(solution, task_list, depot_list):    
 
-        if len(neighbor_solution[depot1]) < 3 and len(neighbor_solution[depot2]) < 3:
-            neighbor_solution= None
+    all_routes_tasks = [] 
+    route_task_lists = []
+
+    for route_idx, route in enumerate(solution):
+        internal = route[1:-1]
+        route_task_lists.append(list(internal))
+        all_routes_tasks.extend(internal)
+
+    task_counter = Counter(all_routes_tasks)
+    
+    for route_idx in range(len(route_task_lists)):
+        i = 0
+        while i < len(route_task_lists[route_idx]):
+            task = route_task_lists[route_idx][i]
+            if task_counter[task] > 1:
+                route_task_lists[route_idx].pop(i)
+                task_counter[task] -= 1
+            else:
+                i += 1
+
+    all_routes_tasks = []
+    for tlist in route_task_lists:
+        all_routes_tasks.extend(tlist)
+
+    missing_tasks = set(task_list) - set(all_routes_tasks)
+
+    for mtask in missing_tasks:
+        for route_idx in range(len(route_task_lists)):
+            if len(route_task_lists[route_idx]) < UAV_CAPACITY - 1:  
+                route_task_lists[route_idx].append(mtask)
+                break
+        else:
+            route_task_lists[-1].append(mtask)
+
+    for route_idx in range(len(route_task_lists)):
+        while len(route_task_lists[route_idx]) > (UAV_CAPACITY - 1):
+            moved_task = route_task_lists[route_idx].pop()
+            placed = False
+            for other_idx in range(len(route_task_lists)):
+                if other_idx == route_idx:
+                    continue
+                if len(route_task_lists[other_idx]) < (UAV_CAPACITY - 1):
+                    route_task_lists[other_idx].append(moved_task)
+                    placed = True
+                    break
+            if not placed:
+                route_task_lists[-1].append(moved_task)
+
+    repaired_solution = []
+    for idx in range(len(route_task_lists)):
+        depot = depot_list[idx]
+        new_route = [depot] + route_task_lists[idx] + [depot]
+        repaired_solution.append(new_route)
+
+    return repaired_solution
+
+
+def internal_nodes(route):
+    return route[1:-1]
+
+def applyCrossover(parent_1, parent_2):
+
+    offspring_1 = None
+    offspring_2 = None
+    iteration = 0
+
+    while offspring_1 is None or offspring_2 is None:
+
+        iteration += 1
+        if iteration == MAX_ATTEMPTS:
+            return parent_1 , parent_2
+
+        offspring_1 = copy.deepcopy(parent_1)
+        offspring_2 = copy.deepcopy(parent_2)
+        
+        depot1 = np.random.choice(len(offspring_1))
+        depot2 = np.random.choice(len(offspring_2))
+
+        if len(offspring_1[depot1]) < 3 or len(offspring_2[depot2]) < 3:
+            offspring_1, offspring_2 = None, None
             continue
 
+        if set(internal_nodes(offspring_1[depot1])).intersection(set(internal_nodes(offspring_2[depot2]))):
+            offspring_1, offspring_2 = None, None
+            continue
+        
+        method = np.random.choice(['singlePoint' , 'multiPoint' , 'uniform'])
+
         if method == 'singlePoint':
-            crossover_point = np.random.randint(1, min(len(neighbor_solution[depot1]), len(neighbor_solution[depot2])) - 1)
+            crossover_point = np.random.randint(1, min(len(offspring_1[depot1]), len(offspring_2[depot2])) - 1)
 
             new_depot1 = (
-                [neighbor_solution[depot1][0]] + 
-                neighbor_solution[depot1][1:crossover_point] +
-                neighbor_solution[depot2][crossover_point:-1] +
-                [neighbor_solution[depot1][-1]]
+                [offspring_1[depot1][0]] + 
+                offspring_1[depot1][1:crossover_point] +
+                offspring_2[depot2][crossover_point:-1] +
+                [offspring_1[depot1][-1]]
             )
             new_depot2 = (
-                [neighbor_solution[depot2][0]] + 
-                neighbor_solution[depot2][1:crossover_point] +
-                neighbor_solution[depot1][crossover_point:-1] +
-                [neighbor_solution[depot2][-1]]
+                [offspring_2[depot2][0]] + 
+                offspring_2[depot2][1:crossover_point] +
+                offspring_1[depot1][crossover_point:-1] +
+                [offspring_2[depot2][-1]]
             )
-            neighbor_solution[depot1] = new_depot1
-            neighbor_solution[depot2] = new_depot2
+            offspring_1[depot1] = new_depot1
+            offspring_2[depot2] = new_depot2
 
         if method == 'multiPoint':
 
-            min_len = min(len(neighbor_solution[depot1]), len(neighbor_solution[depot2]))
+            min_len = min(len(offspring_1[depot1]), len(offspring_2[depot2]))
             if min_len < 3:
-                neighbor_solution = None
+                offspring_1, offspring_2 = None, None
                 continue
             else:
                 top_val = min_len // 2
             if top_val < 2:
-                neighbor_solution = None
+                offspring_1, offspring_2 = None, None
                 continue
             else:
                 num_points = np.random.randint(2, top_val + 1)  
                 crossover_points = sorted(np.random.choice(range(1, min_len - 1), num_points, replace=False))
 
-                new_depot1 = neighbor_solution[depot1][:]
-                new_depot2 = neighbor_solution[depot2][:]
+                new_depot1 = offspring_1[depot1][:]
+                new_depot2 = offspring_2[depot2][:]
 
                 for i in range(len(crossover_points)):
                     start = crossover_points[i]
                     end = crossover_points[i+1] if (i+1 < len(crossover_points)) else -1
                     new_depot1[start:end], new_depot2[start:end] = new_depot2[start:end], new_depot1[start:end]
 
-                neighbor_solution[depot1] = (
-                    [neighbor_solution[depot1][0]] +
+                offspring_1[depot1] = (
+                    [offspring_1[depot1][0]] +
                     new_depot1[1:-1] +
-                    [neighbor_solution[depot1][-1]]
+                    [offspring_1[depot1][-1]]
                 )
-                neighbor_solution[depot2] = (
-                    [neighbor_solution[depot2][0]] +
+                offspring_2[depot2] = (
+                    [offspring_2[depot2][0]] +
                     new_depot2[1:-1] +
-                    [neighbor_solution[depot2][-1]]
+                    [offspring_2[depot2][-1]]
                 )
 
         if method == 'uniform':
 
-            new_depot1, new_depot2 = neighbor_solution[depot1][:], neighbor_solution[depot2][:]
+            new_depot1, new_depot2 = offspring_1[depot1][:], offspring_2[depot2][:]
 
             for i in range(1, min(len(new_depot1), len(new_depot2)) - 1):
                 if np.random.rand() < 0.5:
                     new_depot1[i], new_depot2[i] = new_depot2[i], new_depot1[i]
 
-            neighbor_solution[depot1] = (
-                [neighbor_solution[depot1][0]] +
+            offspring_1[depot1] = (
+                [offspring_1[depot1][0]] +
                 new_depot1[1:-1] +
-                [neighbor_solution[depot1][-1]]
+                [offspring_1[depot1][-1]]
             )
-            neighbor_solution[depot2] = (
-                [neighbor_solution[depot2][0]] +
+            offspring_2[depot2] = (
+                [offspring_2[depot2][0]] +
                 new_depot2[1:-1] +
-                [neighbor_solution[depot2][-1]]
+                [offspring_2[depot2][-1]]
             )
 
-    return neighbor_solution
+    return offspring_1, offspring_2
 
 def selection(fitness_values):
     population_size = len(fitness_values)
@@ -140,9 +222,9 @@ def geneticAlgorithm(task_list, depot_list):
                 parent2 = population[selection(fitness_values)]
 
             if np.random.rand() < CROSSOVER_RATE:
-
-                offspring1 = applyCrossover(parent1)
-                offspring2 = applyCrossover(parent2)
+                offspring1, offspring2 = applyCrossover(parent1, parent2)
+                offspring1 = repairSolution(offspring1,task_list,depot_list)
+                offspring2 = repairSolution(offspring2,task_list,depot_list)
 
             else:
                 offspring1 = parent1[:]
