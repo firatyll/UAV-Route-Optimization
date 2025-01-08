@@ -15,21 +15,22 @@ Unmanned Aerial Vehicles (UAVs) play a significant role in various industries, i
 
 ## Algorithm Evaluation & Comparison
 
-After running the algorithms 100 times with the same input, the outputs are as in the table. As a result, the average genetic algorithm cost is **16% less** than the average simulated annealing algorithm cost.
+After running the algorithms 100 times with the same input, the outputs are as in the table. As a result, the average genetic algorithm cost is **16% less** than the average simulated annealing algorithm cost. After update Genetic algorithm ([firatyll/UAV-Route-Optimization@8df3e75](https://github.com/firatyll/UAV-Route-Optimization/commit/8df3e75)) finds the best solution 46% of the time.
+
 
 | Run     | SimulatedAnnealingCost | GeneticAlgorithmCost |
 |---------|------------------------|----------------------|
-| 1       | 49954.97723010203      | 37950.86388960772    |
-| 2       | 48930.8474596152       | 37915.790592982565   |
-| 3       | 49411.75077769216      | 39899.537658400564   |
+| 1       | 46066.69885649407      | 37915.79059298257    |
+| 2       | 48133.68677794399      | 37915.790592982565   |
+| 3       | 44735.938534436046     | 38640.687078658906   |
 | .       | .                      | .                    |
 | .       | .                      | .                    |
 | .       | .                      | .                    |
-| 97      | 42781.11966332571      | 42946.79459625984    |
-| 98      | 41615.96144690286      | 45069.46126362633    |
-| 99      | 52769.6205226033       | 44812.3042169015     |
-| 100     | 47250.00750125875      | 38209.83840886371    |
-| Average | 48023.8132721242       | 39986.98549336301    |
+| 97      | 42011.86865275664      | 41341.65441974222    |
+| 98      | 53230.45787862899      | 38640.687078658906   |
+| 99      | 43226.38721936189      | 37915.79059298257    |
+| 100     | 54413.253886268074     | 41341.65441974222    |
+| Average | 48251.1957670732       | 38809.7242431605     |
 
 ### Simulated Annealing Visualization
 ![simulated annealing](<assets/simulated annealing.png>)
