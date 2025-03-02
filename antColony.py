@@ -58,6 +58,8 @@ def antColony(task_list, depot_list, initial_solution):
     best_cost = calculateTotalCost(best_solution, depot_list)
     pheromone_trails = initialize_pheromone_trails(task_list, depot_list)
     
+    stagnation_counter = 0
+    
     for iteration in range(ITERATION_COUNT):
         ant_colony = []
         
@@ -99,6 +101,14 @@ def antColony(task_list, depot_list, initial_solution):
         if ant_costs[min_cost_idx] < best_cost:
             best_solution = ant_solutions[min_cost_idx]
             best_cost = ant_costs[min_cost_idx]
+            stagnation_counter = 0
+        else:
+            stagnation_counter += 1
+        
+        if stagnation_counter >= 150:
+            print(f"Stagnation detected at iteration {iteration}. Resetting pheromone trails.")
+            pheromone_trails = initialize_pheromone_trails(task_list, depot_list)
+            stagnation_counter = 0
         
         if iteration % 100 == 0:
             print(f"Iteration {iteration}: Best cost = {best_cost}")
