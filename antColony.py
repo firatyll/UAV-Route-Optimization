@@ -65,11 +65,21 @@ def antColony(task_list, depot_list, initial_solution):
             ant_solution = []
             unvisited_tasks = set(range(len(task_list)))
             
+            flag = True 
+            assignment = []
+            while flag:
+                assignment = [np.random.randint(2, UAV_CAPACITY) for _ in range(len(depot_list)-1)]
+                last_assignment = len(task_list) - sum(assignment)
+                assignment.append(last_assignment)
+                if all(2 <= tasks <= UAV_CAPACITY for tasks in assignment):
+                    flag = False
+            
             for depot_idx, depot in enumerate(depot_list):
                 path = [depot]
-                current_node = len(task_list) + depot_idx 
+                current_node = len(task_list) + depot_idx
+                tasks_to_assign = assignment[depot_idx]
                 
-                for _ in range(min(UAV_CAPACITY, len(unvisited_tasks))):
+                for _ in range(tasks_to_assign):
                     next_node = select_next_node(current_node, unvisited_tasks, pheromone_trails, task_list, depot_list)
                     if next_node is None:
                         break
