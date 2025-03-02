@@ -9,33 +9,38 @@ Unmanned Aerial Vehicles (UAVs) play a significant role in various industries, i
 ## Features
 
 - **Optimal Route Planning:** Ensures minimum energy usage and cost.
-- **Flexible Algorithm Integration:** Supports various optimization techniques like Genetic Algorithms, A* Search, etc.
+- **Flexible Algorithm Integration:** Supports various optimization techniques like **Genetic Algorithms, Ant Colony and Simulated Annealing.**
 - **Scalable Design:** Can handle multiple UAVs and complex route scenarios.
 - **Visualization Tools:** Displays optimized routes for better understanding and analysis.
 
 ## Algorithm Evaluation & Comparison
 
-After running the algorithms 100 times with the same input, the outputs are as in the table. As a result, the average genetic algorithm cost is **16% less** than the average simulated annealing algorithm cost. After update Genetic algorithm ([firatyll/UAV-Route-Optimization@8df3e75](https://github.com/firatyll/UAV-Route-Optimization/commit/8df3e75)) finds the best solution 46% of the time.
+After running the algorithms 100 times with the same input, the outputs are as in the table. As a result, the average genetic algorithm cost is **16% less** than the average simulated annealing algorithm cost. Genetic Algorithm and Ant Colony algorithm costs are almost equal but Ant Colony beats Genetic Algorithm with **1.17%** difference. Whereas Genetic Algorithm best cost slighlty better than the Ant Colony best cost. Despite that Standard Deviation of Ant Colony executions **236.36** and Standard Deviation of Genetic Algorithms is **1346.20**. So **Ant Colony Standard Deviation 82.2%** lower than Genetic Algorithm Standard Deviation. This analysis indicates Ant Colony algorithm generates more **Consistent and Stable** results. 
 
 
-| Run     | SimulatedAnnealingCost | GeneticAlgorithmCost |
-|---------|------------------------|----------------------|
-| 1       | 46066.69885649407      | 37915.79059298257    |
-| 2       | 48133.68677794399      | 37915.790592982565   |
-| 3       | 44735.938534436046     | 38640.687078658906   |
-| .       | .                      | .                    |
-| .       | .                      | .                    |
-| .       | .                      | .                    |
-| 97      | 42011.86865275664      | 41341.65441974222    |
-| 98      | 53230.45787862899      | 38640.687078658906   |
-| 99      | 43226.38721936189      | 37915.79059298257    |
-| 100     | 54413.253886268074     | 41341.65441974222    |
-| Average | 48251.1957670732       | 38809.7242431605     |
+| Run     | SimulatedAnnealingCost | GeneticAlgorithmCost | AntColonyAlgorithmCost |
+|---------|------------------------|----------------------|------------------------|
+| 1       | 52380.371568500275     | 37915.79059298257    | 38435.56212417904      |
+| 2       | 50660.10815550388      | 38640.687078658906   | 37950.86388960772      |
+| 3       | 43118.13231865587      | 41341.65441974222    | 37950.86388960771      |
+| .       | .                      | .                    | .                      |
+| .       | .                      | .                    | .                      |
+| .       | .                      | .                    | .                      |
+| 97      | 7614.44035412733       | 37915.79059298257    | 38191.310622302866     |
+| 98      | 47800.36011347326      | 37915.790592982565   | 38244.911705488856     |
+| 99      | 46356.56919404552      | 37915.79059298257    | 38146.04891815241      |
+| 100     | 44833.89282566424      | 37915.79059298257    | 38148.31884491421      |
+| Average | 48745.11326972345      | 38703.14466324456    | 38246.853112397686     |
+| StdDev  | 4140.53                | 1346.20              | 263.36                 |
+| Min     | 39970.05               | 37915.79             | 37950.86               |
+| Max     | 57810.64               | 44764.163            | 39269.48               |
 
 ### Simulated Annealing Visualization
 ![simulated annealing](<assets/simulated annealing.png>)
 ### Genetic Algorithm Visualization
 ![genetic algorithm](<assets/genetic algorithm.png>)
+### Ant Colony Visualization
+![ant colony](<assets/ant colony.png>)
 
 
 ## Installation
